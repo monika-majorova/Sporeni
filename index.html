@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Spoření - Meetup soutěž 3</title>
+        <link rel="stylesheet" type="text/css" href="css.css">
+    </head>
+    <body>
+        <header>
+            <h1>Spoření</h1>
+            <p>Aplikace pro výpočet minimální spořící částky pro zadané cíle.</p>
+        </header>
+        <noscript>
+            <span class="neuspech">
+                Nemáte v prohlížeči zapnutý JavaScript nebo váš prohlížeč JavaScript nepodporuje.
+                Bez podpory JavaScriptu nebude bohužel tato JavaScriptová aplikace fungovat.
+            </span>
+        </noscript>
+        <div id="goal-form" onsubmit="return false;">
+            <h2>Přidat cíl</h2>
+            <form name="goal-form">
+                <label for="goal-name">Název cíle: </label><input type="text" id="goal-name" name="goal-name">
+                <label for="goal-months">Počet měsíců: </label><input type="text" id="goal-months" name="goal-months">
+                <label for="goal-amount">Částka: </label><input type="text" id="goal-amount" name="goal-amount">
+                <button type="button" onClick="submitGoal();">Přidat</button>
+            </form>
+        </div>
+        <div id="container">
+            <span class="neuspech">
+                Pokud vidíte tento text, knihovna React nefunguje správně.
+                Je možné, že používáte zastaralý nebo nepodporovaný prohlížeč, zkuste použít jiný.
+            </span>
+        </div>
+        <script src="lib/react.js"></script>
+        <script src="lib/react-dom.js"></script>
+        <script src="sporeni.js"></script>
+    </body>
+</html>
