@@ -1,62 +1,68 @@
-/* global React, ReactDOM */
-
+/**
+ * Seznam zadaných cílů.
+ * @type Array
+ */
 var goals = [];
+
+/**
+ * Seznam vypočtených sektorů.
+ * @type Array
+ */
 var sectors = [];
 
+/**
+ * Přidá cíl do seznamu cílů.
+ * @param {type} name Jméno cíle.
+ * @param {type} months Za kolik měsíců chceme cíle dosáhnout.
+ * @param {type} amount Částka, kterou chceme naspořit na tento cíl.
+ * @returns {undefined} Nic.
+ */
 function addGoal(name, months, amount) {
     goals[goals.length] = {id:goals.length, name:name, months: months, amount: amount};
 }
 
-//addGoal("C1", 5, 15000);
-//addGoal("C2", 8, 25000);
-//addGoal("C3", 13, 12500);
-
-function submitGoal() {
-    addGoal(document.forms['goal-form']['goal-name'].value, Number(document.forms['goal-form']['goal-months'].value), Number(document.forms['goal-form']['goal-amount'].value));
-    ReactDOM.render(SporeniAppFactory({}), document.getElementById('container'));
-}
-
-function writeGoal(goal) {
-    return React.createElement('li', null, (goal.id + 1) + ": " + goal.name + " za " + goal.months + " měsíců za " + goal.amount + " Kč.");
-}
-
-function writeGoals() {
-    goals = sortGoals();
-    var output = [];
-    for (var i = 0; i < goals.length; i++) {
-        output[output.length] = writeGoal(goals[i]);
+/**
+ * Odebere cíl se zadaným ID ze seznamu cílů.
+ * @param {type} goalId ID cíle k odebrání.
+ * @returns {undefined} True, pokud cíl s takovým ID existuje; false, pokud ne.
+ */
+function removeGoal(goalId) {
+    if (goals[goalId]) {
+        goals.splice(goalId, 1);
+        return true;
+    } else {
+        return false;
     }
-    return output;
 }
 
+/**
+ * Přidat sektor mezi vypočtené sektory.
+ * @param {type} toMonth So kterého měsíce tato částka platí.
+ * @param {type} monthlyAmount Kolik je třeba v tomto sektoru šetřit.
+ * @returns {undefined} Nic.
+ */
 function addSector(toMonth, monthlyAmount) {
     sectors[sectors.length] = {id:sectors.length, toMonth:toMonth, monthlyAmount:monthlyAmount};
 }
 
-function writeSector(sector) {
-    return React.createElement('li', null, (getLastMonthOfPreviousSector(sector) + 1) + ". - " + sector.toMonth + ". měsíc | " + sector.monthlyAmount + " Kč");
-}
-
-function writeSectors() {
-    countResult();
-    var output = [];
-    for (var i = 0; i < sectors.length; i++) {
-        output[output.length] = writeSector(sectors[i]);
-    }
-    return output;
-}
-
+/**
+ * Vypočet, kolik je třeba šetřit (hlavní výpočetní funkce). Na základě cílů spočítá sektory.
+ * @returns {undefined} Nic.
+ */
 function countResult() {
     sectors = [];
     sortedGoals = sortGoals();
     var i;
     for (var i = 0; i < goals.length; i++) {
-        var firstMonth = sectors.length === 0 ? 0 : lastSector().toMonth;
-        var amount = goals[i].amount;
-        var months = goals[i].months;
-        var monthlyAmount = goals[i].amount / (goals[i].months - firstMonth);
-
-        addSector(goals[i].months, monthlyAmount);
+        if (sectors.length > 0 && lastSector().toMonth === goals[i].months) {
+            var firstMonth = getLastMonthOfPreviousSector(lastSector());
+            var monthlyAmount = goals[i].amount / (goals[i].months - firstMonth);
+            lastSector().monthlyAmount += monthlyAmount;
+        } else {
+            var firstMonth = sectors.length === 0 ? 0 : lastSector().toMonth;
+            var monthlyAmount = goals[i].amount / (goals[i].months - firstMonth);
+            addSector(goals[i].months, monthlyAmount);
+        }
 
         // Rozpočítání do ostatních sektorů:
         while (sectors.length > 1) { // Pokud existují alespoň 2 sektory.
@@ -79,6 +85,10 @@ function countResult() {
     }
 }
 
+/**
+ * Seřadí cíle vzestupně dle měsíce, ve kterém jich má být dosaženo. Nemění původní pole cílů.
+ * @returns {Array|sortGoals.output} Seřazený seznam cílů.
+ */
 function sortGoals() {
     var output = [];
     for (var i = 0; i < goals.length; i++) {
@@ -88,49 +98,46 @@ function sortGoals() {
     return output;
 }
 
+/**
+ * Porovnávací funkce pro cíle (porovnává jejich měsíce).
+ * @param {type} goalA První cíl k porovnání.
+ * @param {type} goalB Druhý cíl k porovnání.
+ * @returns {unresolved} Rozdíl v měsících mezi cíly.
+ */
 function compareGoals(goalA, goalB) {
     return goalA.months - goalB.months;
 }
 
+/**
+ * Vypočítá počet měsíců sektoru (s ohledem na konec předchozího sektoru).
+ * @param {type} sector Sektor, jehož délka v měsících má být vypočtena.
+ * @returns {Number} Délka sektoru v měsících.
+ */
 function  numberOfMonthsInSector(sector) {
     return sector.toMonth - getLastMonthOfPreviousSector(sector);
 }
 
+/**
+ * Vrátí poslední existující sektor ze seznamu sektorů.
+ * @returns {unresolved} Poslední existující sektor ze seznamu sektorů nebo null, pokud neexistuje žádný sektor.
+ */
 function lastSector() {
     return sectors.length > 0 ? sectors[sectors.length - 1] : null;
 }
 
+/**
+ * Vrátí předposlední existující sektor ze seznamu sektorů.
+ * @returns {unresolved} Předposlední existující sektor ze seznamu sektorů nebo null, pokud existují méně než 2 sektory.
+ */
 function penultimateSector() {
     return sectors.length > 1 ? sectors[sectors.length - 2] : null;
 }
 
+/**
+ * Vrátí poslední měsíc předchozího sektoru.
+ * @param {type} sector Zkoumaný sektor.
+ * @returns {Number} Poslední měsíc předchozího sektoru nebo 0, pokud jde o první sektor.
+ */
 function getLastMonthOfPreviousSector(sector) {
     return sector.id <= 0 ? 0 : sectors[sector.id - 1].toMonth;
 }
-
-
-var SporeniApp = React.createClass({
-    render: function() {
-        return React.createElement('div', null, 
-            React.createElement('h2', null, 'Cíle'),
-            React.createElement(Goals, null),
-            React.createElement('h2', null, 'Kolik spořit'),
-            React.createElement(Sectors, null)
-        );
-    }
-});
-
-var Goals = React.createClass({
-    render: function() {
-        return React.createElement('ul', null, writeGoals());
-    }
-});
-
-var Sectors = React.createClass({
-   render: function() {
-        return React.createElement('ul', null, writeSectors());
-    } 
-});
-
-var SporeniAppFactory = React.createFactory(SporeniApp);
-ReactDOM.render(SporeniAppFactory({}), document.getElementById('container'));
