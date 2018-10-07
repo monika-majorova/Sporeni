@@ -18,7 +18,26 @@ var sectors = [];
  * @returns {undefined} Nic.
  */
 function addGoal(name, months, amount) {
-    goals[goals.length] = {id:goals.length, name:name, months: months, amount: amount};
+    goals[goals.length] = {name:name, months: months, amount: amount};
+}
+
+/**
+ * Upraví cíl v seznamu cílů.
+ * @param {type} goalId ID cíle, který se má upravit.
+ * @param {type} newName Nové jméno cíle.
+ * @param {type} newMonths Za kolik měsíců chceme cíle nově dosáhnout.
+ * @param {type} newAmount Částka, kterou chceme nově naspořit na tento cíl.
+ * @returns {Boolean} True, pokud cíl s takovým ID existuje; false, pokud ne.
+ */
+function editGoal(goalId, newName, newMonths, newAmount) {
+    if (goals[goalId]) {
+        goals[goalId].name = newName;
+        goals[goalId].months = newMonths;
+        goals[goalId].amount = newAmount;
+        return true;
+    } else {
+        return false;
+    }
 }
 
 /**
