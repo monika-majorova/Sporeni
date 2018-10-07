@@ -133,7 +133,7 @@ function writeSectors() {
  */
 var SporeniApp = React.createClass({
     render: function() {
-        return React.createElement('div', null, 
+        return React.createElement('section', null, 
             React.createElement('h2', null, editGoalId >= 0 ? 'Upravit cíl' : 'Přidat cíl'),
             React.createElement(GoalForm, null),
             React.createElement('div', {'className':messageClass}, message),
@@ -163,10 +163,13 @@ var GoalForm = React.createClass({
         },
         React.createElement('label', {'htmlFor':'goal-name'}, 'Název cíle: '),
         React.createElement('input', {'type':'text', 'id':'goal-name', 'name':'goal-name', 'defaultValue':editGoal ? editGoal.name : ''}),
+        React.createElement('br', null),
         React.createElement('label', {'htmlFor':'goal-months'}, 'Počet měsíců: '),
         React.createElement('input', {'type':'text', 'id':'goal-months', 'name':'goal-months', 'defaultValue':editGoal ? editGoal.months : ''}),
+        React.createElement('br', null),
         React.createElement('label', {'htmlFor':'goal-amount'}, 'Částka: '),
         React.createElement('input', {'type':'text', 'id':'goal-amount', 'name':'goal-amount', 'defaultValue':editGoal ? editGoal.amount : ''}),
+        React.createElement('br', null),
         React.createElement('input', {'type':'hidden', 'name':'goal-edit-id', 'value':editGoalId}),
         React.createElement('input', {'type':'submit', 'onClick':function () {submitGoal();}, 'value': editGoalId >= 0 ? 'Uložit' : 'Přidat'})
         );
