@@ -111,7 +111,10 @@ function writeGoals() {
  * @returns {unresolved} HTML element sektoru.
  */
 function writeSector(sector) {
-    return React.createElement('li', null, (getLastMonthOfPreviousSector(sector) + 1) + ". - " + sector.toMonth + ". měsíc | " + sector.monthlyAmount + " Kč");
+    return React.createElement('tr', null, 
+        React.createElement('th', null, (getLastMonthOfPreviousSector(sector) + 1) + ". - " + sector.toMonth + ". měsíc"),
+        React.createElement('td', null, sector.monthlyAmount + " Kč")
+    );
 }
 
 /**
@@ -192,7 +195,7 @@ var Goals = React.createClass({
  */
 var Sectors = React.createClass({
    render: function() {
-        return React.createElement('ul', null, writeSectors());
+        return React.createElement('table', null, writeSectors());
     } 
 });
 
